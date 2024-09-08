@@ -1,0 +1,57 @@
+import curses
+
+def main(stdscr):
+    # Clear screen
+    stdscr.clear()
+
+    # List of BIOS settings
+    settings = [
+        ("System Time", "[14:29:59]"),
+        ("System Date", "[06/14/2004]"),
+        ("Legacy Diskette A", "1.44/1.25 MB 3½"),
+        ("Legacy Diskette B", "Disabled"),
+        ("Primary Master", "[VMware Virtual ID]"),
+        ("Primary Slave", "[None]"),
+        ("Secondary Master", "[VMware Virtual ID]"),
+        ("Secondary Slave", "[None]"),
+        ("Keyboard Features", "[Not Expanded]"),
+        ("System Memory", "640 KB"),
+        ("Extended Memory", "261120 KB"),
+        ("Boot-time Diagnostic Screen", "Disabled")
+    ]
+
+    # Set up the menu interface
+    current_row = 0
+
+    def print_menu():
+        stdscr.clear()
+        stdscr.addstr(0, 0, "PhoenixBIOS Setup Utility - Main", curses.A_BOLD | curses.A_UNDERLINE)
+        for idx, (setting, value) in enumerate(settings):
+            if idx == current_row:
+                stdscr.addstr(idx + 2, 2, f"{setting}: {value}", curses.A_REVERSE)
+            else:
+                stdscr.addstr(idx + 2, 2, f"{setting}: {value}")
+        stdscr.refresh()
+
+    # Main loop
+    while True:
+        print_menu()
+
+        key = stdscr.getch()
+
+        if key == curses.KEY_UP and current_row > 0:
+            current_row -= 1
+        elif key == curses.KEY_DOWN and current_row < len(settings) - 1:
+            current_row += 1
+        elif key == ord('q'):  # Press 'q' to quit
+            break
+        elif key == ord('\n'):  # Press Enter to edit the value (simulated)
+            setting, value = settings[current_row]
+            new_value = "Enabled" if value == "Disabled" else "Disabled"
+            settings[current_row] = (setting, new_value)
+
+    stdscr.refresh()
+    stdscr.getch()
+
+# Run the application
+curses.wrapper(main)
